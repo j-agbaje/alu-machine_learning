@@ -1,76 +1,80 @@
 #!/usr/bin/env python3
 """
-This script generates multiple plots using matplotlib. 
+This script generates a set of plots using random data, including a scatter plot,
+a line plot, two exponential decay plots, and a histogram. The plots are arranged
+in a 3x2 grid.
 
-It includes:
-- A scatter plot of height vs. weight for a random sample of data.
-- A simple line plot of the cubes of integers from 0 to 10.
-- A logarithmic plot of exponential decay for C-14.
-- A plot comparing the decay of C-14 and Ra-226 over time.
-- A histogram of student grades with specified bins.
+- The first plot shows the relationship between men's height and weight.
+- The second plot displays a cubic curve.
+- The third plot represents exponential decay of C-14 over time.
+- The fourth plot compares the exponential decay of two radioactive elements (C-14 and Ra-226).
+- The fifth plot is a histogram representing student grades.
 
-The plots are displayed in a 3x2 grid, with the histogram spanning the bottom row.
-
-Dependencies:
-- numpy
-- matplotlib
+Modules used:
+- numpy: for generating random data and mathematical operations.
+- matplotlib.pyplot: for creating the plots.
 
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Generate data
-y0 = np.arange(0, 11) ** 3
+# Generate data for the plots
+y0 = np.arange(0, 11) ** 3  # Cubic data for the second plot
 
-mean = [69, 0]
-cov = [[15, 8], [8, 15]]
+# Random data for the scatter plot (height vs. weight)
+mean = [69, 0]  # Mean height and weight
+cov = [[15, 8], [8, 15]]  # Covariance matrix
+np.random.seed(5)  # Seed for reproducibility
+x1, y1 = np.random.multivariate_normal(mean, cov, 2000).T  # Generate random data
+y1 += 180  # Adjust weight data
+
+# Exponential decay data for the third plot (C-14)
+x2 = np.arange(0, 28651, 5730)  # Time points
+r2 = np.log(0.5)  # Decay constant for C-14
+t2 = 5730  # Half-life of C-14
+y2 = np.exp((r2 / t2) * x2)  # Exponential decay formula
+
+# Exponential decay data for the fourth plot (C-14 and Ra-226)
+x3 = np.arange(0, 21000, 1000)  # Time points
+r3 = np.log(0.5)  # Decay constant for both elements
+t31 = 5730  # Half-life of C-14
+t32 = 1600  # Half-life of Ra-226
+y31 = np.exp((r3 / t31) * x3)  # C-14 decay
+y32 = np.exp((r3 / t32) * x3)  # Ra-226 decay
+
+# Generate random data for the histogram (student grades)
 np.random.seed(5)
-x1, y1 = np.random.multivariate_normal(mean, cov, 2000).T
-y1 += 180
+student_grades = np.random.normal(68, 15, 50)  # Grades with mean 68 and stddev 15
 
-x2 = np.arange(0, 28651, 5730)
-r2 = np.log(0.5)
-t2 = 5730
-y2 = np.exp((r2 / t2) * x2)
+# Create a 3x2 grid of subplots
+fig, axes = plt.subplots(3, 2)
+fig.suptitle("All in One", fontsize="x-small")
 
-x3 = np.arange(0, 21000, 1000)
-r3 = np.log(0.5)
-t31 = 5730
-t32 = 1600
-y31 = np.exp((r3 / t31) * x3)
-y32 = np.exp((r3 / t32) * x3)
-
-np.random.seed(5)
-student_grades = np.random.normal(68, 15, 50)
-
-# Create figure and axes for multiple plots
-fig, axes = plt.subplots(3, 2, figsize=(10, 8), gridspec_kw={'height_ratios': [1, 1, 2]})
-
-# Scatter plot for height vs. weight
-axes[0, 1].scatter(x1, y1, color='magenta')
+# First plot: Scatter plot (height vs. weight)
+axes[0, 1].scatter(x1, y1, color='magenta')  # Scatter plot
 axes[0, 1].set_xlabel('Height (in)', fontsize='x-small')
 axes[0, 1].set_ylabel('Weight (lbs)', fontsize='x-small')
 axes[0, 1].set_title("Men's Height vs Weight", fontsize='x-small')
 axes[0, 1].set_xticks([60, 70, 80])
 axes[0, 1].set_xticklabels(['60', '70', '80'])
 
-# Plot cubes of integers from 0 to 10
+# Second plot: Cubic plot
 axes[0, 0].plot(y0, c="red")
 axes[0, 0].set_xlim(0, 10)
 axes[0, 0].set_xticks(np.arange(0, 11, 2))
 
-# Exponential decay plot for C-14
+# Third plot: Exponential decay of C-14
 axes[1, 0].plot(x2, y2, color="blue")
-axes[1, 0].set_xlim(0, 28650)
-axes[1, 0].set_yscale('log')
+axes[1, 0].set_xlim(0, 28650)  # Set x-axis limits
+axes[1, 0].set_yscale('log')  # Set y-axis to logarithmic scale
 axes[1, 0].set_title("Exponential Decay of C-14", fontsize='x-small')
 axes[1, 0].set_ylabel('Fraction Remaining', fontsize='x-small')
 axes[1, 0].set_xlabel('Time (years)', fontsize='x-small')
 axes[1, 0].set_xticks([0, 10000, 20000])
 axes[1, 0].set_xticklabels(['0', '10000', '20000'])
 
-# Exponential decay of C-14 and Ra-226
+# Fourth plot: Exponential decay of two radioactive elements
 axes[1, 1].plot(x3, y31, color='red', linestyle='--')
 axes[1, 1].plot(x3, y32, color='green')
 axes[1, 1].set_xlim(0, 20000)
@@ -82,18 +86,18 @@ axes[1, 1].set_ylabel('Fraction Remaining', fontsize='x-small')
 axes[1, 1].set_xlabel('Time (years)', fontsize='x-small')
 axes[1, 1].legend(['C-14', 'Ra-226'], loc='upper right', fontsize='x-small')
 
-# Histogram for student grades
-ax_hist = fig.add_subplot(3, 1, 3)
+# Fifth plot: Histogram of student grades
+ax5 = fig.add_subplot(3, 1, 3)  # Span the last plot across both columns
 bins = np.arange(0, 110, 10)
-ax_hist.hist(student_grades, bins=bins, edgecolor='black')
-ax_hist.set_xlabel("Grades", fontsize='x-small')
-ax_hist.set_ylabel('Number of Students', fontsize='x-small')
-ax_hist.set_title("Project A", fontsize='x-small')
-ax_hist.set_xlim(0, 100)
-ax_hist.set_ylim(0, 30)
-ax_hist.set_yticks(np.arange(0, 31, 5))
+ax5.hist(student_grades, bins=bins, edgecolor='black')
+ax5.set_title("Project A", fontsize="x-small")
+ax5.set_xlabel("Grades", fontsize="x-small")
+ax5.set_ylabel("Number of Students", fontsize="x-small")
+ax5.set_xlim(0, 100)  # Set x-axis limits
+ax5.set_ylim(0, 30)  # Set y-axis limits
+ax5.set_yticks(np.arange(0, 31, 5))
 
-# Adjust layout and display plot
+# Adjust layout for better spacing and display the plot
 plt.tight_layout()
 plt.show()
 
